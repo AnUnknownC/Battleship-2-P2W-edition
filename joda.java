@@ -1,8 +1,9 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class joda {
+public class Main {
     public static void main(String[] args) {
-        int numero = 2;
-        System.out.println("Hola mundo " + numero);
+        String palabra1 = "Hello";
+        String palabra2 = " World";
+        System.out.println(palabra1+palabra2);
     }
 }
