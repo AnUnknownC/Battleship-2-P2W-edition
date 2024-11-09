@@ -25,11 +25,13 @@ public class Board {
         if (columnLimit <= size && rowLimit <= size){
             for(Position position: ship.getHits().keySet()){
                 char actualPosition = grid[position.getRow()][position.getColumn()];
-                if (actualPosition == 'H'){
+                if (actualPosition == 'H' && !ship.getHits().get(position)){
                     System.out.println("There is already a ship in one of the cells, try again");
                     return false;
-                } else{
+                } else if (actualPosition != 'H' && !ship.getHits().get(position)){
                     grid[position.getRow()][position.getColumn()] = 'H';
+                } else if (actualPosition != 'H' && ship.getHits().get(position)) {
+                    grid[position.getRow()][position.getColumn()] = 'X';
                 }
             }
             System.out.println("Ship successfully placed");
@@ -58,5 +60,18 @@ public class Board {
 
     public boolean validateCoordinate(Position position){
         return position.getRow() <= size && position.getColumn() <= size;
+    }
+
+    public boolean moveShip(Ship shipToChange, Position newPosition, boolean newIsHorizontal) {
+        Ship ship = new Ship(newPosition, shipToChange.getShipLength(), !newIsHorizontal);
+        ship.setHits(ship.changeValues(shipToChange));
+        for (Position position: shipToChange.getHits().keySet()){
+            grid[position.getRow()][position.getColumn()] = '-';
+        }
+        if (canPlaceShip(ship)){
+            return true;
+        }
+        canPlaceShip(shipToChange);
+        return false;
     }
 }

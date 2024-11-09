@@ -1,7 +1,6 @@
 package modelos;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Ship {
     private Position startPosition;
@@ -35,12 +34,23 @@ public class Ship {
 
     public Map<Position, Boolean> getHits() {return hits;}
 
+    public void setHits(Map<Position, Boolean> hits) {this.hits = hits;}
+
     //Confirma si el barco esta hundido
     public boolean isSunken() {
         for (boolean hit: hits.values()){
             if (!hit) return false;
         }
         return true;
+    }
+
+    public Map<Position, Boolean> changeValues(Ship shipToChange) {
+        Iterator<Position> keys = hits.keySet().iterator();
+        Iterator<Boolean> values = shipToChange.hits.values().iterator();
+        while (keys.hasNext() && values.hasNext()){
+            hits.put(keys.next(), values.next());
+        }
+        return hits;
     }
 
     @Override
@@ -51,4 +61,5 @@ public class Ship {
                 ", hits=" + hits +
                 '}';
     }
+
 }
