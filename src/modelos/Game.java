@@ -1,6 +1,5 @@
 package modelos;
 
-import java.io.Console;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -14,6 +13,7 @@ public class Game {
     }
 
     public void start() {
+        System.out.println("Welcome to Battleship!");
 //        Todo lo que esta comentareado aqui es para un juego real en el que se preguntara cuantos barcos quieren los jugadores y se les
 //         dira para que asignen los barcos uno a uno
 //        int ammountShips;
@@ -33,58 +33,69 @@ public class Game {
 //        player1.setShipsForGame(ammountShips);
 //        player2.setShipsForGame(ammountShips);
 
-        //Se asignan los datasets para no colocarlos manualmente
         player1.datosPruebaPlayer1();
         player2.datosPruebaPlayer2();
 
         Player currentPlayer = player1;
         Player opponent = player2;
-        System.out.println("Welcome to Battleship!");
+
         while(!player1.hasLost() && !player2.hasLost()){
-            Position possibleHit;
+            Position possibleHit = new Position(0,0);
+            Position airStrikeHit = new Position(0,0);
             while(true){
                 try {
                     Scanner scanner = new Scanner(System.in);
-                    System.out.println("Turn of: " + currentPlayer.getName());
+                    System.out.println("Turno de: " + currentPlayer.getName());
                     currentPlayer.getBoard().display();
-                    System.out.println("What do you want to do: \n1. Attack \n2. Move ship");
-                    int choice = scanner.nextInt();
-                    if (choice == 1){
-                        System.out.println("Type the position to attack (Row - Column)");
-                        possibleHit = new Position(scanner.nextInt(), scanner.nextInt());
-                        if (opponent.getBoard().validateCoordinate(possibleHit)){
-                            currentPlayer.attack(opponent, possibleHit);
-                            break;
-                        }else {
-                            System.out.println("Invalid coordinate, try again");
-                        }
-                    }
-                    else if (choice == 2) {
-                        Ship shipToChange;
-                        Position newPosition;
-                        Boolean isHorizontal;
-                        while(true){
-                            System.out.println("Select the ship to move: ");
-                            for (int i = 0; i < currentPlayer.getAllShips().size(); i++) {
-                                System.out.println((i + 1) + ". Ship in " + currentPlayer.getAllShips().get(i).getStartPosition());
+                    Scanner choice = new Scanner(System.in);
+                    System.out.println("Type the position to attack (Row - Column)");
+                    possibleHit = new Position(scanner.nextInt(), scanner.nextInt());
+                    if (opponent.getBoard().validateCoordinate(possibleHit)){
+                        
+                        /// -------------------- Esto lo añadi -------------------- ///
+                        if (!currentPlayer.getUseStreaks().getStreak().isEmpty()) {
+                            System.out.println("Desea Usar una racha? (UAV, AirStrike, Nuke) (si/no)");
+                            String useStreak = scanner.next();
+                            
+                            if (useStreak.equalsIgnoreCase("si")) {
+                                System.out.println("Cual desea usar? (UAV/AirStrike/Nuke)");
+                                String chooseStreak = scanner.next();
+    
+                                if (chooseStreak.equalsIgnoreCase("UAV")) {
+                                    System.out.println("-----------------------------");
+                                    currentPlayer.getUseStreaks().useUAV(opponent);
+                                    System.out.println("-----------------------------");
+                           
+                                } else if (chooseStreak.equalsIgnoreCase("AirStrike")) {
+
+                                    System.out.println("Ingrese las coordenadas (FILA COLUMNA): ");
+                                    airStrikeHit = new Position(scanner.nextInt(),scanner.nextInt());
+                                    // System.out.println("HOLA MUNDO");
+                                    currentPlayer.getUseStreaks().useAirStrike(opponent, new Position(airStrikeHit));
+
+                                } else if (chooseStreak.equalsIgnoreCase("Nuke")) {
+                                    currentPlayer.getUseStreaks().useNuke(opponent);
+                                    currentPlayer.getBoard().display();
+                                } else {
+                                    System.out.println("Recompensa Invalida");
+                                }
                             }
-                            shipToChange = currentPlayer.getAllShips().get(scanner.nextInt() - 1);
-                            System.out.println("Type the new position to place the ship (Row - column): ");
-                            newPosition = new Position(scanner.nextInt(), scanner.nextInt());
-                            System.out.println("Would you prefer to place it horizontally? (true/false): ");
-                            isHorizontal = scanner.nextBoolean();
-                            if (currentPlayer.getBoard().moveShip(shipToChange, newPosition, isHorizontal)){
-                                break;
-                            }
+                        } else {
+                            System.out.println("----------------------------------------- "); 
                         }
+
+                        /// ----------------------------------------------------------------- ///
+                        
                         break;
-                    }  else {
-                        System.out.println("Not available option, try again");
+                    }else {
+                        System.out.println("Invalid coordinate, try again");
                     }
-                } catch (InputMismatchException | IndexOutOfBoundsException e){
-                    System.out.println("Incorrect input, try again");
+                    
+                }catch (InputMismatchException e){
+                    System.out.println("Invalid coordinate, try again");
                 }
             }
+            currentPlayer.attack(opponent, possibleHit);
 
             Player temp = currentPlayer;
             currentPlayer = opponent;
