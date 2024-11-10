@@ -4,17 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import pruebas.PruebasRachas;
+
 public class Player {
     private String name;
     private Board board;
     private List<Ship> ships;
+    private PruebasRachas useStreak;
 
     public Player(String name) {
         this.name = name;
         this.board = new Board();
         this.ships = new ArrayList<>();
+        this.useStreak = new PruebasRachas();
     }
 
+    /// ---------- Esto lo añadi -------------///
+    public PruebasRachas getUseStreaks(){
+        return useStreak;
+    }
+    /// --------------------------------------///
+    
     public String getName() {return name;}
 
     public Board getBoard() {return board;}
@@ -38,12 +48,18 @@ public class Player {
                 boolean confirmedHit = position.getRow() == possibleHit.getRow() && position.getColumn() == possibleHit.getColumn();
                 //Confirma si hay un barco en la posicion
                 if(confirmedHit){
+
+                    /// ------------------------------------------------///
+                    System.out.println( "Kill Streak: "); // Le sumara +1 al killStreak 
+                    useStreak.unlockStreak(useStreak.updateKillStreak());
+                    /// ------------------------------------------------ //
+                    
                     //Confirma si se le habia golpeado en la zona
                     if (ship.getHits().get(position)){
                         System.out.println("This zone is already damaged");
                         return false;
                     }
-                    System.out.println("CONFIRMED STRIKE");
+                    System.out.println("CONFIRMED STRIKE"); 
                     ship.getHits().put(position, true);
                     opponent.getBoard().showDamage(position, true);
                     return true;
@@ -85,7 +101,7 @@ public class Player {
     //Como en el codigo original aqui dejare los datasets para no tener que colocar la informacion de los barcos uno por uno.
     public void datosPruebaPlayer1(){
 //        addShipToPlayer(new Ship(new Position(2, 2), 6, true));
-        addShipToPlayer(new Ship(new Position(5, 5), 2, true));
+        addShipToPlayer(new Ship(new Position(0, 0), 10, true));
 //        addShipToPlayer(new Ship(new Position(6, 0), 1, true));
 //        addShipToPlayer(new Ship(new Position(4, 4), 5, false));
     }
@@ -96,4 +112,6 @@ public class Player {
 //        addShipToPlayer(new Ship(new Position(0, 7), 3, true));
 //        addShipToPlayer(new Ship(new Position(5, 5), 5, true));
     }
+
+
 }
