@@ -1,72 +1,54 @@
 package pruebas;
 
-import java.util.ArrayList;
-
 import modelos.Player;
 import modelos.Position;
 
+import java.util.Scanner;
+
 public class PruebasRachas {
-     
-     private int killStreak;
-     private ArrayList<String> streak;
+    static Player currentPlayer = new Player("Bruh");
+    static Player opponent = new Player("Dud");
 
-     public PruebasRachas(){
-          this.killStreak = 0;
-          this.streak = new ArrayList<>();
-     }
-
-     public int updateKillStreak(){
-          System.out.println(killStreak);
-          return killStreak++;  
-     }
-
-     public ArrayList<String> getStreak(){
-          return streak;
-     }
-
-    public void unlockStreak(int killStreak){
-          if (killStreak == 4 && !streak.contains("UAV")){
-               streak.add("UAV");
-          } 
-          else if (killStreak == 5 && !streak.contains("AirStrike")){
-               streak.add("AirStrike");
-               System.out.println("AirStrike Disponible!");
-          }
-          else if (killStreak == 8 && !streak.contains("Nuke")){
-               streak.add("Nuke");
-               System.out.println("¡Alerta de nuke, Disponible!");
-          }
+    public static void PruebasContadorRacha() {
+        currentPlayer.datosPruebaPlayer1();
+        Position hit = new Position(2, 2);
+        currentPlayer.attack(currentPlayer, hit);
+        System.out.println(currentPlayer.getStreak().getKillStreak());
     }
 
-    public void useUAV(Player opponent){
-          if(streak.contains("UAV")){
-               System.out.println("Desplegando UAV...");
-               opponent.getBoard().display();
-               streak.remove("UAV");
-          } else {
-               System.out.println("No hay suficientes Puntos");
-          }
+    public static void PruebasDisponibilidadRachas() {
+        currentPlayer.datosPruebaPlayer1();
+        for (int i = 0; i < 8; i++) {
+            currentPlayer.attack(currentPlayer, new Position(i, 0));
+        }
     }
 
-    public void useAirStrike(Player opponent, Position Position){
-          if(streak.contains("AirStrike")){
-               System.out.println("Usando AirStrike");
-               opponent.getBoard().validateCoordinate(Position);
-               streak.remove("AirStrike");
-          } else {
-               System.out.println("No hay suficientes Puntos");
-          }
+    public static void PruebasAccesoRachas() {
+        opponent.datosPruebaPlayer2();
+//        currentPlayer.getStreak().useUAV(opponent);
+//        currentPlayer.getStreak().useAirStrike(opponent);
+//        currentPlayer.getStreak().useNuke(opponent);
+//        opponent.getBoard().display();
     }
 
-    public void useNuke(Player opponent){
-     if(streak.contains("Nuke")){
-          System.out.println("Usando Nuke");
-          System.out.println("3... 2... 1...");
-          for (int i = 0; i<opponent.getBoard().getSize(); i++){
-               for (int j = 0; j< opponent.getBoard().getSize(); j++){
-                    opponent.attack(opponent, (new Position(i,j)));
-               }
-          }
-     }
+    public static void PruebaEntradaInterfaz(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("You are on a streak, this are the available options: ");
+        currentPlayer.getStreak().getAvailableStreaks().stream()
+                .map(option -> "- " + option).forEach(System.out::println);
+        System.out.println("Type the option's name to use (if not then just type Ignore): ");
+        String choice = scanner.next();
+        if (choice.toUpperCase().equals("UAV")){
+            currentPlayer.getStreak().useUAV(opponent);
+        } else if (choice.toUpperCase().equals("AIRSTRIKE")){
+            currentPlayer.getStreak().useAirStrike(opponent);
+        }  else if (choice.toUpperCase().equals("NUKE")){
+            currentPlayer.getStreak().useNuke(opponent);
+        }  else if (choice.toUpperCase().equals("IGNORE")){
+            System.out.println("Roger, continue the attack");
+        } else {
+            System.out.println("Wrong option, try again");
+        }
+        System.out.println(opponent.hasLost());
     }
 }
