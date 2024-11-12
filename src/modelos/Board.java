@@ -4,6 +4,8 @@ public class Board {
     private int size;
     private char[][] grid;
 
+    public int getSize() {return size;}
+
     public Board() {
         this.size = 10; //El tamaño original seran 20, pero prueben con 10 para que vean como funciona
         grid = new char[size][size];
@@ -34,7 +36,6 @@ public class Board {
                     grid[position.getRow()][position.getColumn()] = 'X';
                 }
             }
-            System.out.println("Ship successfully placed");
             return true;
         }
         System.out.println("The ship is out of the limits, use another start position");
